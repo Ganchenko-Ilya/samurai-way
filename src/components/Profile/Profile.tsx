@@ -1,18 +1,18 @@
 import React from "react";
 import s from "./Profile.module.css";
 import { MyPost } from "./MyPost/MyPost";
+import { ProfileDescription } from "./ProfileDescription/ProfileDescription";
+import { postType } from "../../redax/state";
 
-export const Profile = () => {
+type ProfilePropsType ={ 
+  post:{posts:postType[]};
+}
+
+export const Profile = (props:ProfilePropsType) => {
   return (
-    <div className={s.content}>
-      <div>
-        <img
-          src="https://i.pinimg.com/originals/45/94/2c/45942ccb43b3159a09f34a7c2755e67d.jpg"
-          alt=""
-        />
-      </div>
-      <div>ava + description</div>
-      <MyPost />
+    <div >
+      <ProfileDescription/>
+      <MyPost  post={props.post.posts}/>
     </div>
   );
 };

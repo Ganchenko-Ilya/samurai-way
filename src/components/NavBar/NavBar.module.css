@@ -2,9 +2,11 @@
   grid-area: n;
   background-color: burlywood;
 }
-.item{
-  color: #fff
+.item a{
+  text-decoration: none;
+  color:#fff;
+  
 } 
-.active{
-  color:yellow;
+.item .active{
+  color:rgb(13, 180, 192);
 }
