@@ -1,18 +1,27 @@
-import React from "react";
-import s from "./Profile.module.css";
-import { MyPost } from "./MyPost/MyPost";
 import { ProfileDescription } from "./ProfileDescription/ProfileDescription";
-import { postType } from "../../redax/state";
 
-type ProfilePropsType ={ 
-  post:{posts:postType[]};
-}
+import { MyPostContainer } from "./MyPost/MyPost-Conteiner";
+import { ProfileApiType } from "../../api/api-social";
 
-export const Profile = (props:ProfilePropsType) => {
+export type ProfilePropsType = {
+  profile: ProfileApiType | null;
+  isLoading: boolean;
+  statusProfile: string;
+  changeStatusProfile: (status: string) => void;
+};
+
+export const Profile = (props: ProfilePropsType) => {
+  
+  
   return (
-    <div >
-      <ProfileDescription/>
-      <MyPost  post={props.post.posts}/>
+    <div>
+      <ProfileDescription
+        changeStatusProfile={props.changeStatusProfile}
+        statusProfile={props.statusProfile}
+        profile={props.profile}
+        isLoading={props.isLoading}
+      />
+      <MyPostContainer />
     </div>
   );
 };

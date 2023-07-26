@@ -1,32 +1,77 @@
-import React from "react";
-import {  Route } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 
 import "./App.css";
-import { Dialogs } from "./components/Dialogs/Dialogs";
-import { Header } from "./components/Header/Header";
+
 import { NavBar } from "./components/NavBar/NavBar";
 
-import { Profile } from "./components/Profile/Profile";
-import { stateType } from "./redax/state";
-type AppTypeProps = {
-  state:stateType
+import { DialogsContainer } from "./components/Dialogs/Dialogst-Container";
+import { UsersContainer } from "./components/Users/UsersContainer";
+import { ProfileContainer } from "./components/Profile/ProfileContainer";
+import { HeaderContainer } from "./components/Header/HeaderContainer";
+import { FormDataType, Login, LoginForm } from "./components/Login/Login";
+import { connect } from "react-redux";
+import { reducerType, thunkDispatch } from "./redax/store-redux";
+import { useEffect } from "react";
+import { authLogInTC, authStateTC } from "./redax/auth-reducer";
+import { Loader } from "./other/addComponents/Loader/Loader";
 
-}
 
-function App( props: AppTypeProps) {
+function App(props: propsAppType) {
+  console.log("render App");
+
+  useEffect(() => {
+    props.authStateTC();
+  }, []);
+  if (!props.loaderApp) {
+    return <Loader />;
+  }
+  const submit = (value: FormDataType) => {
+    props.authLogInTC(value);
+  };
+
   return (
-    
     <div className="app-wrapper">
-      <Header />
+      <HeaderContainer />
       <NavBar />
       <div className="app-wrapper-page">
-        <Route path='/Profile' render={() => <Profile post={props.state.postPage}/>}/>
-        <Route path='/Dialogs' render={() => <Dialogs dialogs={props.state.dialogsPage}  />}/>
-        
+        <Switch>
+          <Route path="/Profile/:userId?" render={() => <ProfileContainer />} />
+          <Route path="/Dialogs" render={() => <DialogsContainer />} />
+
+          <Route path="/Users" render={() => <UsersContainer />} />
+
+          <Route
+            path="/Login"
+            render={() =>
+              props.auth ? (
+                <Redirect to="Profile" />
+              ) : (
+                <LoginForm onSubmit={submit} />
+              )
+            }
+          />
+          <Redirect to="/Profile" />
+        </Switch>
       </div>
     </div>
-    
   );
 }
 
-export default App;
+const stateMap = (state: reducerType) => {
+  return {
+    loaderApp: state.appReducer.loader,
+    auth: state.authReducer.authLogin,
+  };
+};
+const dispatchMap = (dispatch: thunkDispatch) => {
+  return {
+    authStateTC: () => dispatch(authStateTC()),
+    authLogInTC: (value: FormDataType) => dispatch(authLogInTC(value)),
+  };
+};
+
+type stateMapType = ReturnType<typeof stateMap>;
+type dispatchMapType = ReturnType<typeof dispatchMap>;
+type propsAppType = stateMapType & dispatchMapType;
+
+export default connect(stateMap, dispatchMap)(App);

@@ -1,24 +1,34 @@
-import React from "react";
-import { postType } from "../../../redax/state";
+import { ChangeEvent } from "react";
 
 import s from "./MyPost.module.css";
-import { Post, PostType } from "./Post/Post";
+import { Post } from "./Post/Post";
+import { postType } from "../../../redax/profile-reducer";
+import { MyPostPropsType } from "./MyPost-Conteiner";
 
-type MyPostPropsType = {
-  post: postType[];
-}
-export const MyPost = (props:MyPostPropsType) => {
-  
-  const postMap = props.post.map((el) => <Post id={el.id} message={el.message} likeCounter={el.likeCounter} />);
+export const MyPost = (props: MyPostPropsType) => {
+  const buttonHandler = () => {
+    props.addPost();
+  };
+  const onChangeHanlder = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.currentTarget.value;
+
+    props.onChangeTextPost(value);
+  };
+  const postMap = props.post.map((el) => (
+    <Post id={el.id} message={el.message} likeCounter={el.likeCounter} />
+  ));
   return (
     <div className={s.blokPost}>
       My post
       <div>
         <div>
-          <textarea></textarea>
+          <textarea
+            value={props.newPostText}
+            onChange={onChangeHanlder}
+          ></textarea>
         </div>
 
-        <button>Add post</button>
+        <button onClick={buttonHandler}>Add post</button>
       </div>
       <div className={s.posts}>{postMap}</div>
     </div>
